@@ -1,15 +1,15 @@
-import tokenization
-import extract_features
+import qa.bert_model.tokenization as tokenization
 import tensorflow as tf
-import optimization
-import modeling
+import qa.bert_model.optimization as optimization
+import qa.bert_model.modeling as modeling
 
 BERT_BASE_DIR = '../data/uncased_L-12_H-768_A-12/'
 CONFIG_FILE = BERT_BASE_DIR + 'bert_config.json'
 INIT_CHECKPOINT = BERT_BASE_DIR + 'bert_model.ckpt'
 LEARNING_RATE = 2e-5
 WARMUP_PROPORTION = 0.1
-OUTPUT_DIR = '/tmp/vca-qa/'
+# OUTPUT_DIR = '/tmp/vca-qa/'
+OUTPUT_DIR = '/tmp/bert2/'
 DATA_DIR = '../glue_data/SQUAD'
 
 flags = tf.flags

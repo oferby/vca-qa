@@ -13,6 +13,7 @@ INIT_CHECKPOINT = BERT_BASE_DIR + 'bert_model.ckpt'
 LEARNING_RATE = 2e-5
 WARMUP_PROPORTION = 0.1
 OUTPUT_DIR = './bert_model/data/'
+MODEL_DIR = OUTPUT_DIR + "model/"
 
 flags = tf.flags
 FLAGS = flags.FLAGS
@@ -28,7 +29,7 @@ flags.DEFINE_float("num_train_epochs", 3.0,
 flags.DEFINE_float("learning_rate", 5e-5, "The initial learning rate for Adam.")
 
 tf.logging.set_verbosity(tf.logging.INFO)
-tf.gfile.MakeDirs(OUTPUT_DIR)
+tf.gfile.MakeDirs(MODEL_DIR)
 
 
 class InputFeatures(object):
@@ -38,12 +39,12 @@ class InputFeatures(object):
                  input_ids,
                  input_mask,
                  segment_ids,
-                 label_id,
+                 label_ids,
                  is_real_example=True):
         self.input_ids = input_ids
         self.input_mask = input_mask
         self.segment_ids = segment_ids
-        self.label_id = label_id
+        self.label_ids = label_ids
         self.is_real_example = is_real_example
 
 
@@ -180,7 +181,7 @@ class Predictor(threading.Thread):
             input_ids=input_ids,
             input_mask=input_mask,
             segment_ids=segment_ids,
-            label_id=label_id,
+            label_ids=label_id,
             is_real_example=True)
         return feature
 
@@ -196,12 +197,12 @@ class Predictor(threading.Thread):
                 for i, paragraph in enumerate(request.paragraphs):
                     example = InputExample(i, paragraph, question)
                     features = Predictor.convert_single_example(example, self.label_list, max_seq_len, self.tokenizer)
-                    label_id_list.append(features.label_id)
+                    label_id_list.append(features.label_ids)
                     input_ids_list.append(features.input_ids)
                     input_mask_list.append(features.input_mask)
                     segment_ids_list.append(features.segment_ids)
 
-                yield {'label_id': label_id_list,
+                yield {'label_ids': label_id_list,
                        'input_ids': input_ids_list,
                        'input_mask': input_mask_list,
                        'segment_ids': segment_ids_list}
@@ -210,9 +211,9 @@ class Predictor(threading.Thread):
 
             return (tf.data.Dataset.from_generator(gen,
                                                    output_types={'input_ids': tf.int32, 'input_mask': tf.int32,
-                                                                 'segment_ids': tf.int32, 'label_id': tf.int32},
+                                                                 'segment_ids': tf.int32, 'label_ids': tf.int32},
                                                    output_shapes={
-                                                       'label_id': (4),
+                                                       'label_ids': (4),
                                                        'input_ids': (4, max_seq_len),
                                                        'input_mask': (4, max_seq_len),
                                                        'segment_ids': (4, max_seq_len)}
@@ -308,7 +309,7 @@ class Predictor(threading.Thread):
             features["input_ids"] = create_int_feature(feature.input_ids)
             features["input_mask"] = create_int_feature(feature.input_mask)
             features["segment_ids"] = create_int_feature(feature.segment_ids)
-            features["label_ids"] = create_int_feature([feature.label_id])
+            features["label_ids"] = create_int_feature([feature.label_ids])
             features["is_real_example"] = create_int_feature(
                 [int(feature.is_real_example)])
 
@@ -372,7 +373,7 @@ class Predictor(threading.Thread):
             input_ids = features["input_ids"]
             input_mask = features["input_mask"]
             segment_ids = features["segment_ids"]
-            label_ids = features["label_id"]
+            label_ids = features["label_ids"]
             if "is_real_example" in features:
                 is_real_example = tf.cast(features["is_real_example"], dtype=tf.float32)
             else:
@@ -458,7 +459,7 @@ class Predictor(threading.Thread):
             use_one_hot_embeddings=False)
 
         run_config = tf.contrib.tpu.RunConfig(
-            model_dir=OUTPUT_DIR,
+            model_dir=MODEL_DIR,
             save_checkpoints_steps=True)
 
         estimator = tf.contrib.tpu.TPUEstimator(
@@ -484,7 +485,7 @@ class Predictor(threading.Thread):
 
         num_warmup_steps = int(num_train_steps * WARMUP_PROPORTION)
 
-        train_file = os.path.join(OUTPUT_DIR, "train.tf_record")
+        train_file = os.path.join(MODEL_DIR, "train.tf_record")
         self.file_based_convert_examples_to_features(
             train_examples, self.label_list, FLAGS.max_seq_length, self.tokenizer, train_file)
 

@@ -1,5 +1,7 @@
 import threading
-
+import csv
+import os
+import collections
 import qa.bert_model.tokenization as tokenization
 import tensorflow as tf
 import qa.bert_model.optimization as optimization
@@ -10,20 +12,23 @@ CONFIG_FILE = BERT_BASE_DIR + 'bert_config.json'
 INIT_CHECKPOINT = BERT_BASE_DIR + 'bert_model.ckpt'
 LEARNING_RATE = 2e-5
 WARMUP_PROPORTION = 0.1
-# OUTPUT_DIR = '/tmp/vca-qa/'
-OUTPUT_DIR = '/tmp/bert2/'
+OUTPUT_DIR = './bert_model/data/'
 
 flags = tf.flags
-
 FLAGS = flags.FLAGS
-
-## Required parameters
 flags.DEFINE_integer("predict_batch_size", 8, "Total batch size for predict.")
 flags.DEFINE_integer(
     "max_seq_length", 128,
     "The maximum total input sequence length after WordPiece tokenization. "
     "Sequences longer than this will be truncated, and sequences shorter "
     "than this will be padded.")
+flags.DEFINE_integer("train_batch_size", 32, "Total batch size for training.")
+flags.DEFINE_float("num_train_epochs", 3.0,
+                   "Total number of training epochs to perform.")
+flags.DEFINE_float("learning_rate", 5e-5, "The initial learning rate for Adam.")
+
+tf.logging.set_verbosity(tf.logging.INFO)
+tf.gfile.MakeDirs(OUTPUT_DIR)
 
 
 class InputFeatures(object):
@@ -45,7 +50,7 @@ class InputFeatures(object):
 class InputExample(object):
     """A single training/test example for simple sequence classification."""
 
-    def __init__(self, text_a, text_b=None, label=None):
+    def __init__(self, guid, text_a, text_b=None, label=None):
         """Constructs a InputExample.
 
         Args:
@@ -57,13 +62,14 @@ class InputExample(object):
           label: (Optional) string. The label of the example. This should be
             specified for train and dev examples, but not for test examples.
         """
+        self.guid = guid
         self.text_a = text_a
         self.text_b = text_b
         self.label = label
 
 
 class Predictor(threading.Thread):
-    def __init__(self, main_q, thread_q):
+    def __init__(self, main_q=None, thread_q=None):
         self.thread_q = thread_q
         self.main_q = main_q
         self.bert_config = modeling.BertConfig.from_json_file(CONFIG_FILE)
@@ -187,8 +193,8 @@ class Predictor(threading.Thread):
                 input_ids_list = []
                 input_mask_list = []
                 segment_ids_list = []
-                for paragraph in request.paragraphs:
-                    example = InputExample(paragraph, question)
+                for i, paragraph in enumerate(request.paragraphs):
+                    example = InputExample(i, paragraph, question)
                     features = Predictor.convert_single_example(example, self.label_list, max_seq_len, self.tokenizer)
                     label_id_list.append(features.label_id)
                     input_ids_list.append(features.input_ids)
@@ -213,6 +219,102 @@ class Predictor(threading.Thread):
                                                    ).prefetch(10))
 
         return input_fn
+
+    @staticmethod
+    def _create_examples(lines, set_type):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            if i == 0:
+                continue
+            guid = "%s-%s" % (set_type, i)
+            text_a = tokenization.convert_to_unicode(line[3])
+            text_b = tokenization.convert_to_unicode(line[4])
+            if set_type == "test":
+                label = "0"
+            else:
+                label = tokenization.convert_to_unicode(line[0])
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
+        return examples
+
+    @staticmethod
+    def _read_tsv(input_file, quotechar=None):
+        """Reads a tab separated value file."""
+        with tf.gfile.Open(input_file, "r") as f:
+            reader = csv.reader(f, delimiter="\t", quotechar=quotechar)
+            lines = []
+            for line in reader:
+                lines.append(line)
+            return lines
+
+    def file_based_input_fn_builder(self, input_file, seq_length, is_training,
+                                    drop_remainder=False):
+        """Creates an `input_fn` closure to be passed to TPUEstimator."""
+
+        name_to_features = {
+            "input_ids": tf.FixedLenFeature([seq_length], tf.int64),
+            "input_mask": tf.FixedLenFeature([seq_length], tf.int64),
+            "segment_ids": tf.FixedLenFeature([seq_length], tf.int64),
+            "label_ids": tf.FixedLenFeature([], tf.int64),
+            "is_real_example": tf.FixedLenFeature([], tf.int64),
+        }
+
+        def _decode_record(record, name_to_features):
+            """Decodes a record to a TensorFlow example."""
+            example = tf.parse_single_example(record, name_to_features)
+
+            return example
+
+        def input_fn(params):
+            """The actual input function."""
+            batch_size = params["batch_size"]
+
+            # For training, we want a lot of parallel reading and shuffling.
+            # For eval, we want no shuffling and parallel reading doesn't matter.
+            d = tf.data.TFRecordDataset(input_file)
+            if is_training:
+                d = d.repeat()
+                d = d.shuffle(buffer_size=100)
+
+            d = d.apply(
+                tf.contrib.data.map_and_batch(
+                    lambda record: _decode_record(record, name_to_features),
+                    batch_size=batch_size,
+                    drop_remainder=drop_remainder))
+
+            return d
+
+        return input_fn
+
+    def file_based_convert_examples_to_features(
+            self, examples, label_list, max_seq_length, tokenizer, output_file):
+        """Convert a set of `InputExample`s to a TFRecord file."""
+
+        writer = tf.python_io.TFRecordWriter(output_file)
+
+        for (ex_index, example) in enumerate(examples):
+            if ex_index % 1000 == 0:
+                tf.logging.info("Writing example %d of %d" % (ex_index, len(examples)))
+
+            feature = Predictor.convert_single_example(example, label_list,
+                                                       max_seq_length, self.tokenizer)
+
+            def create_int_feature(values):
+                f = tf.train.Feature(int64_list=tf.train.Int64List(value=list(values)))
+                return f
+
+            features = collections.OrderedDict()
+            features["input_ids"] = create_int_feature(feature.input_ids)
+            features["input_mask"] = create_int_feature(feature.input_mask)
+            features["segment_ids"] = create_int_feature(feature.segment_ids)
+            features["label_ids"] = create_int_feature([feature.label_id])
+            features["is_real_example"] = create_int_feature(
+                [int(feature.is_real_example)])
+
+            tf_example = tf.train.Example(features=tf.train.Features(feature=features))
+            writer.write(tf_example.SerializeToString())
+        writer.close()
 
     @staticmethod
     def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
@@ -363,6 +465,7 @@ class Predictor(threading.Thread):
             use_tpu=False,
             model_fn=model_fn,
             config=run_config,
+            train_batch_size=FLAGS.train_batch_size,
             predict_batch_size=FLAGS.predict_batch_size)
 
         return estimator
@@ -371,5 +474,28 @@ class Predictor(threading.Thread):
         estimator = self.get_estimator()
         predict_input_fn = self.input_fn_builder(FLAGS.max_seq_length)
         for result in estimator.predict(input_fn=predict_input_fn, yield_single_examples=False):
-            print(result)
+            # print(result)
             self.thread_q.put(result)
+
+    def train(self):
+        train_examples = Predictor._create_examples(Predictor._read_tsv(os.path.join(OUTPUT_DIR, "train.tsv")), "train")
+        num_train_steps = int(
+            len(train_examples) / FLAGS.train_batch_size * FLAGS.num_train_epochs)
+
+        num_warmup_steps = int(num_train_steps * WARMUP_PROPORTION)
+
+        train_file = os.path.join(OUTPUT_DIR, "train.tf_record")
+        self.file_based_convert_examples_to_features(
+            train_examples, self.label_list, FLAGS.max_seq_length, self.tokenizer, train_file)
+
+        tf.logging.info("***** Running training *****")
+        tf.logging.info("  Num examples = %d", len(train_examples))
+        tf.logging.info("  Batch size = %d", FLAGS.train_batch_size)
+        tf.logging.info("  Num steps = %d", num_train_steps)
+        train_input_fn = self.file_based_input_fn_builder(
+            input_file=train_file,
+            seq_length=FLAGS.max_seq_length,
+            is_training=True,
+            drop_remainder=True)
+        estimator = self.get_estimator(num_warmup_steps=num_warmup_steps, num_train_steps=num_train_steps)
+        estimator.train(input_fn=train_input_fn, max_steps=num_train_steps)

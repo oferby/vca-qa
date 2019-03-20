@@ -1,7 +1,6 @@
 from concurrent import futures
 import time
 import queue
-import threading
 
 import grpc
 import qa.proto.question_pb2 as pb2
@@ -24,12 +23,22 @@ class ThreadedParagraphFinder(pb2_grpc.QuestionServiceServicer):
         super(ThreadedParagraphFinder, self).__init__()
 
     def getQuestionResponse(self, request, context):
-
+        print('got new QA request')
         callback_q = self.thread_q
         self.main_q.put(request)
         result = callback_q.get(True)
+        print('result: {}'.format(result['probabilities']))
         response = 'response'
-        return pb2.QuestionResponse(paragraph=response)
+        probabilities = []
+        p_max = 0
+        i_max = 0
+        for i, p in enumerate(result['probabilities']):
+            if p[1] > p_max:
+                p_max = p[1]
+                i_max = i
+            probabilities.append(float(p[1]))
+        print('prob: {}'.format(probabilities))
+        return pb2.QuestionResponse(paragraph=response, probability=probabilities, argmax=i_max)
 
 
 def serve():
@@ -49,4 +58,11 @@ def serve():
         server.stop(0)
 
 
+def train():
+    predictor = predict.Predictor()
+    predictor.train()
+
+
+
 serve()
+# train()

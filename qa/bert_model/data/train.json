@@ -1,0 +1,157 @@
+{
+  "data": [
+    {
+      "paragraph": "Elastic Cloud Server (ECS) is a cloud server that provides scalable, on-demand computing resources for secure, flexible, and efficient applications.",
+      "questions": [
+        "What is Elastic Cloud Server?",
+        "What is ECS?",
+        "What is EC2?",
+        "what is a virtual server?"
+      ]
+    },
+    {
+      "paragraph": "You are advised not to upgrade ECS kernel or OS versions. If you want to upgrade the main OS version, for example, from CentOS 7.2 to Cent OS 7.3, use the provided OS changing function.",
+      "questions": [
+        "What Restrictions Apply to ECSs?",
+        "can I upgrade the server kernel?",
+        "can I upgrade the operating system in my server?",
+        "can I upgrade the operating system in my ecs?",
+        "can I upgrade the server os version?"
+      ]
+    },
+    {
+      "paragraph": "You can use ECSs just like traditional physical servers. You can deploy any service application, such as the email system, web system, and Enterprise Resource Planning (ERP) system. After creating an ECS, you can use it like using your local computer or physical server.",
+      "questions": [
+        "What Can I Do with ECSs?"
+      ]
+    },
+    {
+      "paragraph": "Obtaining an ECS can take as little as a few minutes.",
+      "questions": [
+        "How Long Does It Take to Obtain an ECS?"
+      ]
+    },
+    {
+      "paragraph": "Deleted is an intermediate state of the ECS. Deleted indicates that the ECS has been deleted. ECSs in this state can no longer provide services and are soon removed from the system.",
+      "questions": [
+        "What Is a Deleted ECS?"
+      ]
+    },
+    {
+      "paragraph": "No. A deleted ECS is retained in the ECS list on the management console for only a short period of time. It is then completely removed from the system and cannot be provisioned again. You can purchase the ECSs of the same specifications again.",
+      "questions": [
+        "Can a Deleted ECS Be Provisioned Again?",
+        "Can ECS be recovered after deletion?",
+        "Can I restart deleted ECS?"
+      ]
+    },
+    {
+      "paragraph": "No. This function is not supported.",
+      "questions": [
+        "Can I Transfer ECS Ownership Between Accounts?"
+      ]
+    },
+    {
+      "paragraph": "In Windows ECSs, cloudbase-init is the default account of the Cloudbase-Init agent program. It is used to obtain the metadata and execute configurations when the ECS starts.",
+      "questions": [
+        "What Is the cloudbase-init Account in Windows ECSs?"
+      ]
+    },
+    {
+      "paragraph": "ECSs charged in yearly/monthly mode: After you pay for the ECSs and the system successfully deducts incurred fees from your account balance, your ECSs are automatically provisioned.",
+      "questions": [
+        "When Does an ECS Become Provisioned?"
+      ]
+    },
+    {
+      "paragraph": "You can view the ECSs being created only after system disks of the ECSs are created. This requires a period of time.",
+      "questions": [
+        "Why Cannot I View the ECSs Being Created immediately After I Pay for Them?"
+      ]
+    },
+    {
+      "paragraph": "Yes. HUAWEI CLOUD provides the NTP server, and it can only be installed and used on the ECSs that are purchased on the HUAWEI CLOUD management console.",
+      "questions": [
+        "Does HUAWEI CLOUD Provide the NTP Server?"
+      ]
+    },
+    {
+      "paragraph": "You can modify ECS specifications anytime you want. Before modifying ECS specifications, stop the ECS, select target specifications, pay for extra fees, and restart the ECS to make the modification take effect.",
+      "questions": [
+        "How Can I modify specifications of ECSs charged in Yearly/Monthly Mode?"
+      ]
+    },
+    {
+      "paragraph": "You can modify your ECS specifications at any time without paying for the difference. Before modifying the specifications, stop the ECS. Then, on the Elastic Cloud Server page, click More in the Operation column and select Modify Specifications. Then, start the ECS.",
+      "questions": [
+        "How Can I Modify Specifications of ECSs Charged in Pay-Per-Use Mode?"
+      ]
+    },
+    {
+      "paragraph": "After you log in to an ECS using VNC and perform a data viewing operation, such as running the cat command to view large files or playing videos, VNC may become unavailable due to the high memory usage of the browser. In this case, use another browser to log in to the ECS again.",
+      "questions": [
+        "I Cannot View Data After Logging In to an ECS Using VNC"
+      ]
+    },
+    {
+      "paragraph": "Another user has logged in to this ECS using VNC.",
+      "questions": [
+        "Why Does a Blank Screen Appear While the System Displays a Message Indicating Successful Authentication After I Attempted to Log In to an ECS Using VNC?"
+      ]
+    },
+    {
+      "paragraph": "Google Chrome: 31.0 or later, Mozilla Firefox: 27.0 or later, Internet Explorer: 10.0 or later",
+      "questions": [
+        "What Browser Version Is Required to Remotely Log In to an ECS?"
+      ]
+    },
+    {
+      "paragraph": "ECSs can be charged in Yearly/Monthly or Metered mode. You can choose one charging mode based on your requirements.",
+      "questions": [
+        "What Are the Charging Standards of ECSs?"
+      ]
+    },
+    {
+      "paragraph": "In metered mode, ECSs are charged based on usage capacity by hour. If the duration is less than one hour, the system charges for the ECSs based on the actual duration.",
+      "questions": [
+        "What Is the Metered Charging Mode for ECSs?"
+      ]
+    },
+    {
+      "paragraph": "After a Pay-per-Use ECS is stopped, basic resources including vCPUs, memory, and images are not charged, but system disks are charged based on the capacity you use.",
+      "questions": [
+        "Is a Pay-per-Use ECS Billed After Being Stopped?"
+      ]
+    },
+    {
+      "paragraph": "The system sends you a reminder of the account balance changes using emails or short messages. The reminder message contains account balance adjustment, online recharging, and successful recharging.",
+      "questions": [
+        "Can I Receive a Reminder of Account Balance changes?",
+        "Do I get reminder on charges?"
+      ]
+    },
+    {
+      "paragraph": "How Can I Renew ECSs?",
+      "questions": [
+        "On the Elastic Cloud Server page, click More in the Operation column and select Renew to renew the subscription."
+      ]
+    },
+    {
+      "paragraph": "To ping an ECS, enable Internet Control Message Protocol (ICMP) in the security group rules for the ECS.",
+      "questions": [
+        "Why Can I Remotely Access an ECS But Cannot Ping It?",
+        "I can't ping my ecs.",
+        "I can't ping my vm",
+        "How can I ping my ecs?",
+        "How can I ping my server?",
+        "How can I ping my virtual machine?",
+        "How can I ping my VM?"
+
+      ]
+    }
+  ]
+}
+
+
+
+

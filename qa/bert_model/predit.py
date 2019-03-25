@@ -213,10 +213,10 @@ class Predictor(threading.Thread):
                                                    output_types={'input_ids': tf.int32, 'input_mask': tf.int32,
                                                                  'segment_ids': tf.int32, 'label_ids': tf.int32},
                                                    output_shapes={
-                                                       'label_ids': (4),
-                                                       'input_ids': (4, max_seq_len),
-                                                       'input_mask': (4, max_seq_len),
-                                                       'segment_ids': (4, max_seq_len)}
+                                                       'label_ids': (10),
+                                                       'input_ids': (10, max_seq_len),
+                                                       'input_mask': (10, max_seq_len),
+                                                       'segment_ids': (10, max_seq_len)}
                                                    ).prefetch(10))
 
         return input_fn

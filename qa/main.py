@@ -23,7 +23,7 @@ class ThreadedParagraphFinder(pb2_grpc.QuestionServiceServicer):
         super(ThreadedParagraphFinder, self).__init__()
 
     def getQuestionResponse(self, request, context):
-        print('got new QA request')
+        print('got new QA request:\n{}'.format(request))
         callback_q = self.thread_q
         self.main_q.put(request)
         result = callback_q.get(True)

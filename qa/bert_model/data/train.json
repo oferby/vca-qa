@@ -131,9 +131,9 @@
       ]
     },
     {
-      "paragraph": "How Can I Renew ECSs?",
+      "paragraph": "On the Elastic Cloud Server page, click More in the Operation column and select Renew to renew the subscription.",
       "questions": [
-        "On the Elastic Cloud Server page, click More in the Operation column and select Renew to renew the subscription."
+        "How Can I Renew ECSs?"
       ]
     },
     {
@@ -147,6 +147,14 @@
         "How can I ping my virtual machine?",
         "How can I ping my VM?"
 
+      ]
+    },
+    {
+      "paragraph": "This is an example of a test paragraph",
+      "questions": [
+        "is this an example of a test?",
+        "is this a test paragraph?",
+        "where can I find an example of a paragraph?"
       ]
     }
   ]

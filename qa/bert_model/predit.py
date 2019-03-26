@@ -1,6 +1,8 @@
 import threading
 import csv
+import json
 import os
+import random
 import collections
 import qa.bert_model.tokenization as tokenization
 import tensorflow as tf
@@ -24,7 +26,7 @@ flags.DEFINE_integer(
     "Sequences longer than this will be truncated, and sequences shorter "
     "than this will be padded.")
 flags.DEFINE_integer("train_batch_size", 32, "Total batch size for training.")
-flags.DEFINE_float("num_train_epochs", 3.0,
+flags.DEFINE_float("num_train_epochs", 30.0,
                    "Total number of training epochs to perform.")
 flags.DEFINE_float("learning_rate", 5e-5, "The initial learning rate for Adam.")
 
@@ -248,6 +250,29 @@ class Predictor(threading.Thread):
             for line in reader:
                 lines.append(line)
             return lines
+
+    @staticmethod
+    def create_example_from_json(json_file):
+        with open(json_file) as f:
+            data_json = json.load(f)
+
+        examples = []
+        data = data_json['data']
+        for i, p in enumerate(data):
+            paragraph = p['paragraph']
+            for q in p['questions']:
+                examples.append(InputExample(guid=i, text_a=paragraph, text_b=q, label='1'))
+
+                for j in range(2):
+                    random_text_index = i
+                    while i == random_text_index:
+                        random_text_index = random.randint(0, len(data) - 1)
+                    negative_example = data[random_text_index]
+                    neg_id = i + len(data)
+                    neg_paragraph = negative_example['paragraph']
+                    examples.append(InputExample(guid=neg_id, text_a=neg_paragraph, text_b=q, label='0'))
+
+        return examples
 
     def file_based_input_fn_builder(self, input_file, seq_length, is_training,
                                     drop_remainder=False):
@@ -479,7 +504,11 @@ class Predictor(threading.Thread):
             self.thread_q.put(result)
 
     def train(self):
-        train_examples = Predictor._create_examples(Predictor._read_tsv(os.path.join(OUTPUT_DIR, "train.tsv")), "train")
+        train_examples = Predictor.create_example_from_json('./bert_model/data/train.json')
+        # train_examples += Predictor._create_examples(Predictor._read_tsv(os.path.join(OUTPUT_DIR, "train.tsv")), "train")
+
+        # train_examples = Predictor._create_examples(Predictor._read_tsv(os.path.join(OUTPUT_DIR, "train.tsv")), "train")
+
         num_train_steps = int(
             len(train_examples) / FLAGS.train_batch_size * FLAGS.num_train_epochs)
 

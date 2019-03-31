@@ -6,39 +6,48 @@
         "What is Elastic Cloud Server?",
         "What is ECS?",
         "What is EC2?",
-        "what is a virtual server?"
+        "what is a virtual server?",
+        "what service can I use to run my application on the cloud?"
       ]
     },
     {
       "paragraph": "You are advised not to upgrade ECS kernel or OS versions. If you want to upgrade the main OS version, for example, from CentOS 7.2 to Cent OS 7.3, use the provided OS changing function.",
       "questions": [
-        "What Restrictions Apply to ECSs?",
+        "What Restrictions Apply to ECS?",
         "can I upgrade the server kernel?",
         "can I upgrade the operating system in my server?",
         "can I upgrade the operating system in my ecs?",
+        "can I upgrade the operating system in my elastic cloud server?",
         "can I upgrade the server os version?"
       ]
     },
     {
-      "paragraph": "You can use ECSs just like traditional physical servers. You can deploy any service application, such as the email system, web system, and Enterprise Resource Planning (ERP) system. After creating an ECS, you can use it like using your local computer or physical server.",
+      "paragraph": "You can use ECS just like traditional physical servers. You can deploy any service application, such as the email system, web system, and Enterprise Resource Planning (ERP) system. After creating an ECS, you can use it like using your local computer or physical server.",
       "questions": [
-        "What Can I Do with ECSs?"
+        "What Can I Do with ECS?",
+        "What can I do with elastic cloud server?",
+        "What Can I Do with vm?",
+        "What Can I Do with virtual server?",
+        "What Can I Do with virtual machine?"
       ]
     },
     {
       "paragraph": "Obtaining an ECS can take as little as a few minutes.",
       "questions": [
-        "How Long Does It Take to Obtain an ECS?"
+        "How Long Does It Take to Obtain an ECS?",
+        "How much time does it take to start a cloud server?",
+        "How long does it take to create an elastic cloud server?"
       ]
     },
     {
-      "paragraph": "Deleted is an intermediate state of the ECS. Deleted indicates that the ECS has been deleted. ECSs in this state can no longer provide services and are soon removed from the system.",
+      "paragraph": "Deleted is an intermediate state of the ECS. Deleted indicates that the ECS has been deleted. ECS in this state can no longer provide services and are soon removed from the system.",
       "questions": [
-        "What Is a Deleted ECS?"
+        "What Is a Deleted ECS?",
+        "What is a deleted state indication?"
       ]
     },
     {
-      "paragraph": "No. A deleted ECS is retained in the ECS list on the management console for only a short period of time. It is then completely removed from the system and cannot be provisioned again. You can purchase the ECSs of the same specifications again.",
+      "paragraph": "No. A deleted ECS is retained in the ECS list on the management console for only a short period of time. It is then completely removed from the system and cannot be provisioned again. You can purchase the ECS of the same specifications again.",
       "questions": [
         "Can a Deleted ECS Be Provisioned Again?",
         "Can ECS be recovered after deletion?",
@@ -52,25 +61,25 @@
       ]
     },
     {
-      "paragraph": "In Windows ECSs, cloudbase-init is the default account of the Cloudbase-Init agent program. It is used to obtain the metadata and execute configurations when the ECS starts.",
+      "paragraph": "In Windows ECS, cloudbase-init is the default account of the Cloudbase-Init agent program. It is used to obtain the metadata and execute configurations when the ECS starts.",
       "questions": [
-        "What Is the cloudbase-init Account in Windows ECSs?"
+        "What Is the cloudbase-init Account in Windows ECS?"
       ]
     },
     {
-      "paragraph": "ECSs charged in yearly/monthly mode: After you pay for the ECSs and the system successfully deducts incurred fees from your account balance, your ECSs are automatically provisioned.",
+      "paragraph": "ECS charged in yearly/monthly mode: After you pay for the ECS and the system successfully deducts incurred fees from your account balance, your ECS is automatically provisioned.",
       "questions": [
         "When Does an ECS Become Provisioned?"
       ]
     },
     {
-      "paragraph": "You can view the ECSs being created only after system disks of the ECSs are created. This requires a period of time.",
+      "paragraph": "You can view the ECS being created only after system disks of the ECS are created. This requires a period of time.",
       "questions": [
-        "Why Cannot I View the ECSs Being Created immediately After I Pay for Them?"
+        "Why Cannot I View the ECS Being Created immediately After I Pay for Them?"
       ]
     },
     {
-      "paragraph": "Yes. HUAWEI CLOUD provides the NTP server, and it can only be installed and used on the ECSs that are purchased on the HUAWEI CLOUD management console.",
+      "paragraph": "Yes. HUAWEI CLOUD provides the NTP server, and it can only be installed and used on the ECS that is purchased on the HUAWEI CLOUD management console.",
       "questions": [
         "Does HUAWEI CLOUD Provide the NTP Server?"
       ]
@@ -78,13 +87,14 @@
     {
       "paragraph": "You can modify ECS specifications anytime you want. Before modifying ECS specifications, stop the ECS, select target specifications, pay for extra fees, and restart the ECS to make the modification take effect.",
       "questions": [
-        "How Can I modify specifications of ECSs charged in Yearly/Monthly Mode?"
+        "How Can I modify specifications of ECS charged in Yearly/Monthly Mode?",
+        "Can I change the specification of my virtual server?"
       ]
     },
     {
       "paragraph": "You can modify your ECS specifications at any time without paying for the difference. Before modifying the specifications, stop the ECS. Then, on the Elastic Cloud Server page, click More in the Operation column and select Modify Specifications. Then, start the ECS.",
       "questions": [
-        "How Can I Modify Specifications of ECSs Charged in Pay-Per-Use Mode?"
+        "How Can I Modify Specifications of ECS Charged in Pay-Per-Use Mode?"
       ]
     },
     {
@@ -106,15 +116,17 @@
       ]
     },
     {
-      "paragraph": "ECSs can be charged in Yearly/Monthly or Metered mode. You can choose one charging mode based on your requirements.",
+      "paragraph": "ECS can be charged in Yearly/Monthly or Metered mode. You can choose one charging mode based on your requirements.",
       "questions": [
-        "What Are the Charging Standards of ECSs?"
+        "What Are the Charging Standards of ECS?",
+        "how do you charge virtual cloud server?",
+        "how do you charge virtual machine?"
       ]
     },
     {
-      "paragraph": "In metered mode, ECSs are charged based on usage capacity by hour. If the duration is less than one hour, the system charges for the ECSs based on the actual duration.",
+      "paragraph": "In metered mode, ECS are charged based on usage capacity by hour. If the duration is less than one hour, the system charges for the ECS based on the actual duration.",
       "questions": [
-        "What Is the Metered Charging Mode for ECSs?"
+        "What Is the Metered Charging Mode for ECS?"
       ]
     },
     {
@@ -133,7 +145,8 @@
     {
       "paragraph": "On the Elastic Cloud Server page, click More in the Operation column and select Renew to renew the subscription.",
       "questions": [
-        "How Can I Renew ECSs?"
+        "How Can I Renew ECS?",
+        "How can I renew elastic cloud server?"
       ]
     },
     {
@@ -150,11 +163,38 @@
       ]
     },
     {
+      "paragraph": "If your ECS is to be used in a short term, you are advised to pay pay-per-use rates. If you plan to use ECS for one to three years, you are advised to use RIs.",
+      "questions": [
+        "which is better, pay per use or reserve instance?",
+        "what method of payment should I use for ecs?",
+        "what method of payment should I use for elastic cloud server?"
+      ]
+    },
+    {
+      "paragraph": "With the Virtual Private Cloud (VPC) service, you can build a dedicated network, set the subnet and security group, and allow the VPC to communicate with the external network through an EIP",
+      "questions": [
+        "what is vpc for?",
+        "what is vpc good for?",
+        "what can I do with virtual private cloud?"
+        ]
+    },{
+      "paragraph" : "With the Image Management Service (IMS), you can install images on ECS, or create ECS using private images and deploy services quickly.",
+      "questions": [
+        "what can I do with ims?",
+        "what is ims?",
+        "what can I do with Image Management Service?",
+        "How can I install private image on ecs?"
+      ]
+    },
+    {
       "paragraph": "This is an example of a test paragraph",
       "questions": [
         "is this an example of a test?",
         "is this a test paragraph?",
         "where can I find an example of a paragraph?"
+      ],
+      "question_not": [
+        "should this be an answer to my question?"
       ]
     }
   ]

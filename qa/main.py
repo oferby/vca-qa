@@ -1,10 +1,14 @@
 from concurrent import futures
 import time
 import queue
-
 import grpc
-import qa.proto.question_pb2 as pb2
-import qa.proto.question_pb2_grpc as pb2_grpc
+
+import sys
+
+sys.path.insert(0, './proto')
+
+import question_pb2 as pb2
+import question_pb2_grpc as pb2_grpc
 import qa.bert_model.predit as predict
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
@@ -63,6 +67,4 @@ def train():
     predictor.train()
 
 
-
 serve()
-# train()

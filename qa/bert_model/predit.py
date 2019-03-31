@@ -8,6 +8,7 @@ import qa.bert_model.tokenization as tokenization
 import tensorflow as tf
 import qa.bert_model.optimization as optimization
 import qa.bert_model.modeling as modeling
+import pymongo
 
 BERT_BASE_DIR = './bert_model/data/uncased_L-12_H-768_A-12/'
 CONFIG_FILE = BERT_BASE_DIR + 'bert_config.json'
@@ -16,6 +17,7 @@ LEARNING_RATE = 2e-5
 WARMUP_PROPORTION = 0.1
 OUTPUT_DIR = './bert_model/data/'
 MODEL_DIR = OUTPUT_DIR + "model/"
+MONGODB_HOST = '10.100.99.85'
 
 flags = tf.flags
 FLAGS = flags.FLAGS
@@ -274,6 +276,46 @@ class Predictor(threading.Thread):
 
         return examples
 
+    @staticmethod
+    def create_example_from_db():
+        client = pymongo.MongoClient(host=MONGODB_HOST)
+        db = client.vca
+        qanda_collection = db.qanda.find()
+
+        qanda_list = []
+        for qa in qanda_collection:
+            qanda_list.append(qa)
+
+        examples = []
+        i = 0
+        for indx, qa in enumerate(qanda_list):
+            paragraph = qa['paragraph']
+
+            if 'questions' in qa:
+                for q in qa['questions']:
+                    i += 1
+                    examples.append(InputExample(guid=i, text_a=paragraph, text_b=q, label='1'))
+
+            if 'questions_not' in qa:
+                for q in qa['questions_not']:
+                    i += 1
+                    examples.append(InputExample(guid=i, text_a=paragraph, text_b=q, label='0'))
+
+            for j in range(2):
+                i += 1
+                random_q_id = indx
+                while random_q_id == indx:
+                    r = random.randint(0, len(qanda_list) - 1)
+                    if 'questions' in qanda_list[r]:
+                        random_q_id = r
+
+                neg_paragraph = qanda_list[random_q_id]
+                neg_questinos = neg_paragraph['questions']
+                neg_q_index = random.randint(0, len(neg_questinos) - 1)
+                examples.append(InputExample(guid=i, text_a=paragraph, text_b=neg_questinos[neg_q_index], label='0'))
+
+        return examples
+
     def file_based_input_fn_builder(self, input_file, seq_length, is_training,
                                     drop_remainder=False):
         """Creates an `input_fn` closure to be passed to TPUEstimator."""
@@ -504,11 +546,8 @@ class Predictor(threading.Thread):
             self.thread_q.put(result)
 
     def train(self):
-        train_examples = Predictor.create_example_from_json('./bert_model/data/train.json')
-        # train_examples += Predictor._create_examples(Predictor._read_tsv(os.path.join(OUTPUT_DIR, "train.tsv")), "train")
-
-        # train_examples = Predictor._create_examples(Predictor._read_tsv(os.path.join(OUTPUT_DIR, "train.tsv")), "train")
-
+        # train_examples = Predictor.create_example_from_json('./bert_model/data/train.json')
+        train_examples = Predictor.create_example_from_db()
         num_train_steps = int(
             len(train_examples) / FLAGS.train_batch_size * FLAGS.num_train_epochs)
 
